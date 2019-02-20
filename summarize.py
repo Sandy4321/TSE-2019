@@ -27,6 +27,33 @@ barriers = ['Finding a task to start with', # NO
             'Getting contribution accepted', # TH
             'Issue to create a patch'] # TH
 
+categories = {
+                'NO': ['Finding a task to start with', # NO
+                    'Finding a mentor', # NO
+                    'Poor "How to contribute"', #NO
+                    'Newcomers don’t know what is the contribution flow'], #NO
+                'NC' : ['Lack of Patience', # NC
+                    'Shyness', # NC
+                    'Lack of domain expertise', # NC
+                    'Lack of knowledge in project processes and practice', # NC
+                    'Knowledge on technologies and tools used', # NC
+                    'Knowledge of versioning control systems'], # NC
+                'RI' : ['Receiving answers with too advanced/complex contents', # RI
+                    'Impolite answers', # RI
+                    'Not receiving an answer', # RI
+                    'Delayed Answer'], # RI
+                'DC' : ['Some newcomers need to contact a real person'], # DC
+                'DP' : ['Documentation Outdated', # DP
+                    'Documentation Overload', # DP
+                    'Documentation Unclear', # DP
+                    'Documentation Spread', # DP
+                    'Documentation General'], # DP
+                'TH' : ['Building workspace locally', # TH
+                    'Lack of information on how to send a contribution', # TH
+                    'Getting contribution accepted', # TH
+                    'Issue to create a patch'] # TH
+            }
+
 facets = ['Females motivation',
           'Females lower computer self-efficacy',
           'Females risk-averse than males',
@@ -123,23 +150,90 @@ def adjacency_matrix(diaries, filename, output):
                             else:
                                 matrix[adjacent_i][adjacent_j].append(diaries['barriers'][diary][row][output])
 
+        with open(filename, 'w', encoding='utf-8') as file:
+            writer = csv.DictWriter(file, fieldnames= ['adjacents'] +  labels)
+            writer.writeheader()
+
+            for adjacent_i in labels:
+                row = {'adjacents': adjacent_i}
+
+                for adjacent_j in labels:
+                    if matrix[adjacent_i][adjacent_j]:
+                        if output == 'occurrences':
+                            row.update({adjacent_j: sum(matrix[adjacent_i][adjacent_j])})
+                        else:
+                            row.update({adjacent_j: matrix[adjacent_i][adjacent_j]})
+                    else:
+                        row.update({adjacent_j: ''})
+
+                writer.writerow(row)
+
+def diaries_per_category(diaries, filename):
+    matrix = {}
+    categories_list = ['NO', 'NC', 'RI', 'DC', 'DP', 'TH']
+    labels = facets + categories_list + ['NO FACET', 'NO BARRIER']
+
+    for adjacent_i in labels:
+        matrix[adjacent_i] = {}
+        for adjacent_j in labels:
+            matrix[adjacent_i][adjacent_j] = []
+
+    for diary in diaries['barriers']:
+        for row in diaries['barriers'][diary]:
+            dependencies = diaries['barriers'][diary][row]['occurred'] + diaries['facets'][diary][row]['occurred']
+
+            for adjacent_i in dependencies:
+                adjacent_i_category = None
+                adjacent_j_category = None
+
+                for category in categories:
+                    if adjacent_i in categories[category]:
+                        adjacent_i_category = category
+
+                if adjacent_i_category:
+                    if adjacent_i_category in categories_list and not any(facet in dependencies for facet in facets):
+                        if not diary in matrix[adjacent_i_category]['NO FACET']:
+                            matrix[adjacent_i_category]['NO FACET'].append(diary)
+
+                if adjacent_i in facets and not any(barrier in dependencies for barrier in barriers):
+                    if not diary in matrix[adjacent_i]['NO BARRIER']:
+                        matrix[adjacent_i]['NO BARRIER'].append(diary)
+
+                for adjacent_j in dependencies:
+                    if adjacent_i != adjacent_j:
+                        for category in categories:
+                            if adjacent_j in categories[category]:
+                                adjacent_j_category = category
+                        
+                        if adjacent_i_category:
+                            if adjacent_j_category:
+                                if not diary in matrix[adjacent_i_category][adjacent_j_category]:
+                                    matrix[adjacent_i_category][adjacent_j_category].append(diary)
+                            else:
+                                if not diary in matrix[adjacent_i_category][adjacent_j]:
+                                    matrix[adjacent_i_category][adjacent_j].append(diary)
+                        else:
+                            if adjacent_j_category:
+                                if not diary in matrix[adjacent_i][adjacent_j_category]:
+                                    matrix[adjacent_i][adjacent_j_category].append(diary)
+                            else:
+                                if not diary in matrix[adjacent_i][adjacent_j]:
+                                    matrix[adjacent_i][adjacent_j].append(diary)
+
     with open(filename, 'w', encoding='utf-8') as file:
-        writer = csv.DictWriter(file, fieldnames= ['adjacents'] +  labels)
+        writer = csv.DictWriter(file, fieldnames= ['#'] +  labels)
         writer.writeheader()
 
         for adjacent_i in labels:
-            row = {'adjacents': adjacent_i}
+            row = {'#': adjacent_i}
 
             for adjacent_j in labels:
-                if matrix[adjacent_i][adjacent_j]:
-                    if output == 'occurrences':
-                       row.update({adjacent_j: sum(matrix[adjacent_i][adjacent_j])})
-                    else:
-                       row.update({adjacent_j: matrix[adjacent_i][adjacent_j]})
+                if len(matrix[adjacent_i][adjacent_j]) > 0:
+                    row.update({adjacent_j: len(matrix[adjacent_i][adjacent_j])})
                 else:
-                   row.update({adjacent_j: ''})
-
+                    row.update({adjacent_j: 0})
             writer.writerow(row)
+
 
 if __name__ == "__main__":
     male_folder = "./MaleDiaries/"
@@ -159,26 +253,13 @@ if __name__ == "__main__":
     for key in labels.keys():
         diaries = read_diaries(folders={'male': male_folder, 'female': female_folder}, labels=labels[key])
         # Occurrences
-        adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '.csv', output='occurrences')
-        adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '.csv', output='occurrences')
+        # adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '.csv', output='occurrences')
+        # adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '.csv', output='occurrences')
         # Quotes
-        adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '_quotes.csv', output='row_value')
-        adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '_quotes.csv', output='row_value')
+        # adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '_quotes.csv', output='row_value')
+        # adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '_quotes.csv', output='row_value')
         # Diary Number
-        adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '_diaries.csv', output='diary')
-        adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '_diaries.csv', output='diary')
-
-'''
-Insert the item description into the hyperlink range.
-Set the cursor to the mouse pointer.
-
-When clicked, the description of an item was not redirecting
- the user to the related page. The description was moved to the
-hyperlink range, and now all the item elements are clickable.
-To assure that the item will look like a clickable element,
-the cursor was set to the mouse pointer, so when the user point
-over the item, it looks like a clickable element.
-
-Add the cursor:pointer rule to the gallery div of item_fig_desc.html
-Signed-off-by: Felipe Fronchetti's avatarFelipe Fronchetti <fronchetti@usp.br>
-'''
+        # adjacency_matrix(diaries=diaries['male'], filename=output_folder + 'male_' + key + '_diaries.csv', output='diary')
+        # adjacency_matrix(diaries=diaries['female'], filename=output_folder + 'female_' + key + '_diaries.csv', output='diary')
+        diaries_per_category(diaries['male'], filename=output_folder + 'male_' + key + '_count.csv')
+        diaries_per_category(diaries['female'], filename=output_folder + 'female_' + key + '_count.csv')
