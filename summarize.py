@@ -257,6 +257,98 @@ def diaries_per_category(diaries, filename):
 
             writer.writerow(row)
 
+def barriers_by_all_facets(diaries, filename):
+    matrix = {}
+    categories_list = ['NO', 'NC', 'RI', 'DC', 'DP', 'TH']
+    vertices = categories_list + ['WITH FACET', 'WITHOUT FACET'] + ['NO BARRIER']
+
+    for adjacent_i in vertices:
+        matrix[adjacent_i] = {}
+        for adjacent_j in vertices:
+            matrix[adjacent_i][adjacent_j] = []
+
+    for diary in diaries['barriers']:
+        for row in diaries['barriers'][diary]:
+            occurrences = diaries['barriers'][diary][row]['occurred'] + diaries['facets'][diary][row]['occurred']
+
+            for adjacent_i in occurrences:
+                adjacent_i_category = None
+
+                for category in categories:
+                    if adjacent_i in categories[category]:
+                        adjacent_i_category = category
+
+                # If adjacent_i is a barrier category, and any facet occurred in the row.
+                if adjacent_i_category != None and any(facet in occurrences for facet in facets):
+                    matrix[adjacent_i_category]['WITH FACET'].append(row)
+                
+                # If adjacent_i is a barrier category, and no facet occurred in the row.
+                if adjacent_i_category != None and not any(facet in occurrences for facet in facets):
+                    matrix[adjacent_i_category]['WITHOUT FACET'].append(row)
+
+                # If adjacent_i is a facet, and no barrier occurred in the row
+                if adjacent_i_category == None and adjacent_i in facets and not any(barrier in occurrences for barrier in barriers):
+                    # We are only counting one occurrence (not one per facet)
+                    if not row in matrix['WITH FACET']['NO BARRIER']:
+                        matrix['WITH FACET']['NO BARRIER'].append(row)
+
+    with open(filename, 'w', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames= ['#'] +  vertices)
+        writer.writeheader()
+
+        for adjacent_i in vertices:
+            row = {'#': adjacent_i}
+
+            for adjacent_j in vertices:
+                if matrix[adjacent_i][adjacent_j]:
+                    row.update({adjacent_j: len(matrix[adjacent_i][adjacent_j])})
+                else:
+                    row.update({adjacent_j: 0})
+
+            writer.writerow(row)
+
+def facets_by_all_barriers(diaries, filename):
+    matrix = {}
+    vertices = facets + ['WITH BARRIER', 'WITHOUT BARRIER'] + ['WITHOUT FACET']
+
+    for adjacent_i in vertices:
+        matrix[adjacent_i] = {}
+        for adjacent_j in vertices:
+            matrix[adjacent_i][adjacent_j] = []
+
+    for diary in diaries['barriers']:
+        for row in diaries['barriers'][diary]:
+            occurrences = diaries['barriers'][diary][row]['occurred'] + diaries['facets'][diary][row]['occurred']
+
+            for adjacent_i in occurrences:
+                # If adjacent_i is a facet, and there is a barrier in the row
+                if adjacent_i in facets and any(barrier in occurrences for barrier in barriers):
+                    matrix[adjacent_i]['WITH BARRIER'].append(row)
+
+                # If adjacent_i is a facet, and there isn't a barrier in the row
+                if adjacent_i in facets and not any(barrier in occurrences for barrier in barriers):
+                    matrix[adjacent_i]['WITHOUT BARRIER'].append(row)
+                
+                # If adjacent_i is a barrier, and there isn't a facet in the row
+                if adjacent_i in barriers and not any(facet in occurrences for facet in facets):
+                    # We are only counting one occurrence (not one per facet)
+                    if not row in matrix['WITH BARRIER']['WITHOUT FACET']:
+                        matrix['WITH BARRIER']['WITHOUT FACET'].append(row)
+
+    with open(filename, 'w', encoding='utf-8') as file:
+        writer = csv.DictWriter(file, fieldnames= ['#'] +  vertices)
+        writer.writeheader()
+
+        for adjacent_i in vertices:
+            row = {'#': adjacent_i}
+
+            for adjacent_j in vertices:
+                if matrix[adjacent_i][adjacent_j]:
+                    row.update({adjacent_j: len(matrix[adjacent_i][adjacent_j])})
+                else:
+                    row.update({adjacent_j: 0})
+
+            writer.writerow(row)
 
 if __name__ == "__main__":
     men_diaries_folder = "men_diaries/"
@@ -267,6 +359,8 @@ if __name__ == "__main__":
     rows_folder = output_folder +  'rows/'
     diaries_frequency_folder = output_folder + 'diaries_frequencies/'
     categories_frequency_folder = output_folder + 'categories_frequency/'
+    barriers_by_all_facets_folder = output_folder + 'barriers_by_all_facets/'
+    facets_by_all_barriers_folder = output_folder + 'facets_by_all_barriers/'
 
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
@@ -278,11 +372,17 @@ if __name__ == "__main__":
         os.mkdir(diaries_frequency_folder)
     if not os.path.isdir(categories_frequency_folder):
         os.mkdir(categories_frequency_folder)
+    if not os.path.isdir(barriers_by_all_facets_folder):
+        os.mkdir(barriers_by_all_facets_folder)
+    if not os.path.isdir(facets_by_all_barriers_folder):
+        os.mkdir(facets_by_all_barriers_folder)
 
-    labels = {'a': ['A','X','x'],
-              'a_minus': ['A-','X','x'],
-              'a_plus': ['A+','X','x'],
-              'all': ['A+','A-','A','X','x']}
+    labels = {# 'a': ['A','X','x'],
+              # 'a_minus': ['A-','X','x'],
+              # 'a_plus': ['A+','X','x'],
+              'a_and_a_minus': ['A-', 'A', 'X', 'x'],
+              # 'all': ['A+','A-','A','X','x']
+              }
 
     for key in labels.keys():
         diaries = parse_diaries(folders={'men': men_diaries_folder, 'women': women_diaries_folder}, labels=labels[key])
@@ -296,5 +396,11 @@ if __name__ == "__main__":
         # adjacency_matrix(diaries=diaries['men'], filename=diaries_frequency_folder + 'men_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
         # adjacency_matrix(diaries=diaries['women'], filename=diaries_frequency_folder + 'women_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
         # Diaries per category
-        diaries_per_category(diaries['men'], filename=categories_frequency_folder + 'men_' + key + '_categories_frequency.csv')
-        diaries_per_category(diaries['women'], filename=categories_frequency_folder + 'women_' + key + '_categories_frequency.csv')
+        # diaries_per_category(diaries['men'], filename=categories_frequency_folder + 'men_' + key + '_categories_frequency.csv')
+        # diaries_per_category(diaries['women'], filename=categories_frequency_folder + 'women_' + key + '_categories_frequency.csv')
+        # Barriers by all facets
+        # barriers_by_all_facets(diaries['men'], filename=barriers_by_all_facets_folder + 'men_' + key + '_barriers_by_all_facets.csv')
+        # barriers_by_all_facets(diaries['women'], filename=barriers_by_all_facets_folder + 'women_' + key + '_barriers_by_all_facets.csv')
+        # Facets by all barriers
+        facets_by_all_barriers(diaries['men'], filename=facets_by_all_barriers_folder + 'men_' + key + '_facets_by_all_barriers.csv')
+        facets_by_all_barriers(diaries['women'], filename=facets_by_all_barriers_folder + 'women_' + key + '_facets_by_all_barriers.csv')
