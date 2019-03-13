@@ -223,7 +223,7 @@ def diaries_per_category(diaries, filename):
                         for category in categories:
                             if adjacent_j in categories[category]:
                                 adjacent_j_category = category
-                        
+
                         if adjacent_i_category != None:
                             if adjacent_j_category != None:
                                 if not diary in matrix[adjacent_i_category][adjacent_j_category]:
@@ -281,7 +281,7 @@ def barriers_by_all_facets(diaries, filename):
                 # If adjacent_i is a barrier category, and any facet occurred in the row.
                 if adjacent_i_category != None and any(facet in occurrences for facet in facets):
                     matrix[adjacent_i_category]['WITH FACET'].append(row)
-                
+
                 # If adjacent_i is a barrier category, and no facet occurred in the row.
                 if adjacent_i_category != None and not any(facet in occurrences for facet in facets):
                     matrix[adjacent_i_category]['WITHOUT FACET'].append(row)
@@ -328,7 +328,7 @@ def facets_by_all_barriers(diaries, filename):
                 # If adjacent_i is a facet, and there isn't a barrier in the row
                 if adjacent_i in facets and not any(barrier in occurrences for barrier in barriers):
                     matrix[adjacent_i]['WITHOUT BARRIER'].append(row)
-                
+
                 # If adjacent_i is a barrier, and there isn't a facet in the row
                 if adjacent_i in barriers and not any(facet in occurrences for facet in facets):
                     # We are only counting one occurrence (not one per facet)
@@ -350,12 +350,38 @@ def facets_by_all_barriers(diaries, filename):
 
             writer.writerow(row)
 
+def diaries_statistics(diaries, filename):
+    file = open(filename + 'statistics.txt', 'w')
+
+    for diary in diaries['barriers']:
+        barriers_and_facets = 0
+        barriers = 0
+        facets = 0
+
+        for row in diaries['barriers'][diary]:
+            row_barriers =  diaries['barriers'][diary][row]['occurred']
+            row_facets = diaries['facets'][diary][row]['occurred']
+            print(row_barriers, row_facets)
+
+            if row_barriers:
+                barriers = barriers + len(row_barriers)
+            if row_facets:
+                facets = facets + len(row_facets)
+            if row_barriers and row_facets:
+                barriers_and_facets = barriers_and_facets + 1
+
+        file.write('Diary: ' + str(diary) + '\n')
+        file.write('Total of barriers: ' + str(barriers) + '\n')
+        file.write('Total of facets: ' + str(facets) + '\n')
+        file.write('Total of intersections (Quote has barriers and facets):' + str(barriers_and_facets) + '\n\n')
+
 if __name__ == "__main__":
     men_diaries_folder = "men_diaries/"
     women_diaries_folder = "women_diaries/"
 
-    output_folder = 'results/'    
-    frequency_folder = output_folder + "frequency/"
+    output_folder = 'results/'
+    statistics_folder = output_folder + 'statistics/'
+    frequency_folder = output_folder + 'frequency/'
     rows_folder = output_folder +  'rows/'
     diaries_frequency_folder = output_folder + 'diaries_frequencies/'
     categories_frequency_folder = output_folder + 'categories_frequency/'
@@ -364,6 +390,8 @@ if __name__ == "__main__":
 
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
+    if not statistics_folder:
+        os.mkdir(statistics_folder)
     if not os.path.isdir(frequency_folder):
         os.mkdir(frequency_folder)
     if not os.path.isdir(rows_folder):
@@ -385,10 +413,14 @@ if __name__ == "__main__":
               }
 
     for key in labels.keys():
-        diaries = parse_diaries(folders={'men': men_diaries_folder, 'women': women_diaries_folder}, labels=labels[key])
+        diaries = parse_diaries(folders={'men': men_diaries_folder, 'women': women_diaries_folder}, labels=labels[key])            
+
+        # Statistics
+        diaries_statistics(diaries=diaries['men'], filename=statistics_folder + 'men_')
+        diaries_statistics(diaries=diaries['women'], filename=statistics_folder + 'women_')
         # Occurrences
-        # adjacency_matrix(diaries=diaries['men'], filename=frequency_folder + 'men_' + key + '_frequency.csv', data_type='frequency')
-        # adjacency_matrix(diaries=diaries['women'], filename=frequency_folder + 'women_' + key + '_frequency.csv', data_type='frequency')
+        adjacency_matrix(diaries=diaries['men'], filename=frequency_folder + 'men_' + key + '_frequency.csv', data_type='frequency')
+        adjacency_matrix(diaries=diaries['women'], filename=frequency_folder + 'women_' + key + '_frequency.csv', data_type='frequency')
         # Quotes
         # adjacency_matrix(diaries=diaries['men'], filename=rows_folder + 'men_' + key + '_rows.csv', data_type='rows')
         # adjacency_matrix(diaries=diaries['women'], filename=rows_folder + 'women_' + key + '_rows.csv', data_type='rows')
@@ -402,5 +434,5 @@ if __name__ == "__main__":
         # barriers_by_all_facets(diaries['men'], filename=barriers_by_all_facets_folder + 'men_' + key + '_barriers_by_all_facets.csv')
         # barriers_by_all_facets(diaries['women'], filename=barriers_by_all_facets_folder + 'women_' + key + '_barriers_by_all_facets.csv')
         # Facets by all barriers
-        facets_by_all_barriers(diaries['men'], filename=facets_by_all_barriers_folder + 'men_' + key + '_facets_by_all_barriers.csv')
-        facets_by_all_barriers(diaries['women'], filename=facets_by_all_barriers_folder + 'women_' + key + '_facets_by_all_barriers.csv')
+        # facets_by_all_barriers(diaries['men'], filename=facets_by_all_barriers_folder + 'men_' + key + '_facets_by_all_barriers.csv')
+        # facets_by_all_barriers(diaries['women'], filename=facets_by_all_barriers_folder + 'women_' + key + '_facets_by_all_barriers.csv')
