@@ -356,7 +356,6 @@ def diaries_statistics(diaries, filename):
     for diary in diaries['barriers']:
         barriers_and_facets = 0
         barriers = 0
-        facets = 0
 
         for row in diaries['barriers'][diary]:
             row_barriers =  diaries['barriers'][diary][row]['occurred']
@@ -365,15 +364,12 @@ def diaries_statistics(diaries, filename):
 
             if row_barriers:
                 barriers = barriers + len(row_barriers)
-            if row_facets:
-                facets = facets + len(row_facets)
             if row_barriers and row_facets:
-                barriers_and_facets = barriers_and_facets + 1
+                barriers_and_facets = barriers_and_facets + len(row_barriers)
 
         file.write('Diary: ' + str(diary) + '\n')
         file.write('Total of barriers: ' + str(barriers) + '\n')
-        file.write('Total of facets: ' + str(facets) + '\n')
-        file.write('Total of intersections (Quote has barriers and facets):' + str(barriers_and_facets) + '\n\n')
+        file.write('Total of intersections:' + str(barriers_and_facets) + '\n\n')
 
 if __name__ == "__main__":
     men_diaries_folder = "men_diaries/"
@@ -405,11 +401,11 @@ if __name__ == "__main__":
     if not os.path.isdir(facets_by_all_barriers_folder):
         os.mkdir(facets_by_all_barriers_folder)
 
-    labels = {# 'a': ['A','X','x'],
-              # 'a_minus': ['A-','X','x'],
-              # 'a_plus': ['A+','X','x'],
+    labels = {'a': ['A','X','x'],
+              'a_minus': ['A-','X','x'],
+              'a_plus': ['A+','X','x'],
               'a_and_a_minus': ['A-', 'A', 'X', 'x'],
-              # 'all': ['A+','A-','A','X','x']
+              'all': ['A+','A-','A','X','x']
               }
 
     for key in labels.keys():
@@ -422,17 +418,17 @@ if __name__ == "__main__":
         adjacency_matrix(diaries=diaries['men'], filename=frequency_folder + 'men_' + key + '_frequency.csv', data_type='frequency')
         adjacency_matrix(diaries=diaries['women'], filename=frequency_folder + 'women_' + key + '_frequency.csv', data_type='frequency')
         # Quotes
-        # adjacency_matrix(diaries=diaries['men'], filename=rows_folder + 'men_' + key + '_rows.csv', data_type='rows')
-        # adjacency_matrix(diaries=diaries['women'], filename=rows_folder + 'women_' + key + '_rows.csv', data_type='rows')
+        adjacency_matrix(diaries=diaries['men'], filename=rows_folder + 'men_' + key + '_rows.csv', data_type='rows')
+        adjacency_matrix(diaries=diaries['women'], filename=rows_folder + 'women_' + key + '_rows.csv', data_type='rows')
         # Diary Number
-        # adjacency_matrix(diaries=diaries['men'], filename=diaries_frequency_folder + 'men_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
-        # adjacency_matrix(diaries=diaries['women'], filename=diaries_frequency_folder + 'women_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
+        adjacency_matrix(diaries=diaries['men'], filename=diaries_frequency_folder + 'men_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
+        adjacency_matrix(diaries=diaries['women'], filename=diaries_frequency_folder + 'women_' + key + '_diaries_frequency.csv', data_type='diaries_frequency')
         # Diaries per category
-        # diaries_per_category(diaries['men'], filename=categories_frequency_folder + 'men_' + key + '_categories_frequency.csv')
-        # diaries_per_category(diaries['women'], filename=categories_frequency_folder + 'women_' + key + '_categories_frequency.csv')
+        diaries_per_category(diaries['men'], filename=categories_frequency_folder + 'men_' + key + '_categories_frequency.csv')
+        diaries_per_category(diaries['women'], filename=categories_frequency_folder + 'women_' + key + '_categories_frequency.csv')
         # Barriers by all facets
-        # barriers_by_all_facets(diaries['men'], filename=barriers_by_all_facets_folder + 'men_' + key + '_barriers_by_all_facets.csv')
-        # barriers_by_all_facets(diaries['women'], filename=barriers_by_all_facets_folder + 'women_' + key + '_barriers_by_all_facets.csv')
+        barriers_by_all_facets(diaries['men'], filename=barriers_by_all_facets_folder + 'men_' + key + '_barriers_by_all_facets.csv')
+        barriers_by_all_facets(diaries['women'], filename=barriers_by_all_facets_folder + 'women_' + key + '_barriers_by_all_facets.csv')
         # Facets by all barriers
-        # facets_by_all_barriers(diaries['men'], filename=facets_by_all_barriers_folder + 'men_' + key + '_facets_by_all_barriers.csv')
-        # facets_by_all_barriers(diaries['women'], filename=facets_by_all_barriers_folder + 'women_' + key + '_facets_by_all_barriers.csv')
+        facets_by_all_barriers(diaries['men'], filename=facets_by_all_barriers_folder + 'men_' + key + '_facets_by_all_barriers.csv')
+        facets_by_all_barriers(diaries['women'], filename=facets_by_all_barriers_folder + 'women_' + key + '_facets_by_all_barriers.csv')

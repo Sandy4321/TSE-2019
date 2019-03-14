@@ -6,7 +6,7 @@ Newcomers don’t know what is the contribution flow,0,0,0,0,0,0,0,3,1,0,0,0,0,0
 Lack of Patience,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,2,0
 Shyness,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Lack of domain expertise,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0
-Lack of knowledge in project processes and practice,0,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,1,2,5,0
+Lack of knowledge in project processes and practice,0,0,0,3,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,2,0,0,1,0,1,2,4,0
 Knowledge on technologies and tools used,0,0,0,1,0,0,0,1,0,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,12,0
 Knowledge of versioning control systems,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,2,0,0,0,0,0,0,0,1,4,0
 Receiving answers with too advanced/complex contents,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
@@ -21,10 +21,10 @@ Documentation Spread,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,0,0,0,0,0,0,0,2
 Documentation General,4,0,4,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1,0,0,0,0,1,0,8,4,5,0
 Building workspace locally,0,0,1,0,1,0,0,0,0,2,0,0,0,0,0,2,0,0,0,1,0,0,0,0,0,1,0,3,7,29,0
 Lack of information on how to send a contribution,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0
-Getting contribution accepted,0,0,0,0,0,0,0,2,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,7,0
+Getting contribution accepted,0,0,0,0,0,0,0,2,0,0,0,0,5,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,6,0
 Issue to create a patch,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
 Females motivation,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0
-Females lower computer self-efficacy,3,0,0,0,0,0,0,0,1,0,0,0,1,0,0,0,0,0,0,1,1,0,0,0,0,0,1,2,1,0,12
+Females lower computer self-efficacy,3,0,0,0,0,0,0,1,1,0,0,0,1,0,0,0,0,0,0,1,1,0,1,0,0,0,1,2,1,0,12
 Females risk-averse than males,1,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,0,1,0,0,0,0,1
 Females process information comprehensively,4,0,3,0,0,0,0,1,0,0,0,0,0,0,0,1,0,1,0,8,3,0,0,0,0,2,0,0,0,0,8
 Females learn in process-oriented learning styles,0,1,2,1,0,0,0,2,0,1,0,0,1,0,1,2,0,0,0,4,7,0,0,0,0,1,0,0,0,0,9

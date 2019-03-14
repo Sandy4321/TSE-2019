@@ -1,45 +1,36 @@
 Diary: 1
 Total of barriers: 13
-Total of facets: 8
-Total of intersections (Quote has barriers and facets):6
+Total of intersections:3
 
 Diary: 2
 Total of barriers: 22
-Total of facets: 7
-Total of intersections (Quote has barriers and facets):4
+Total of intersections:6
 
 Diary: 3
 Total of barriers: 2
-Total of facets: 0
-Total of intersections (Quote has barriers and facets):0
+Total of intersections:0
 
 Diary: 4
 Total of barriers: 43
-Total of facets: 19
-Total of intersections (Quote has barriers and facets):13
+Total of intersections:6
 
 Diary: 5
 Total of barriers: 53
-Total of facets: 19
-Total of intersections (Quote has barriers and facets):16
+Total of intersections:10
 
 Diary: 6
 Total of barriers: 6
-Total of facets: 18
-Total of intersections (Quote has barriers and facets):2
+Total of intersections:1
 
 Diary: 7
 Total of barriers: 6
-Total of facets: 6
-Total of intersections (Quote has barriers and facets):2
+Total of intersections:0
 
 Diary: 8
 Total of barriers: 31
-Total of facets: 10
-Total of intersections (Quote has barriers and facets):6
+Total of intersections:5
 
 Diary: 9
 Total of barriers: 33
-Total of facets: 16
-Total of intersections (Quote has barriers and facets):9
+Total of intersections:3
 
