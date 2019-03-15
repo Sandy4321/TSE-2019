@@ -386,7 +386,7 @@ if __name__ == "__main__":
 
     if not os.path.isdir(output_folder):
         os.mkdir(output_folder)
-    if not statistics_folder:
+    if not os.path.isdir(statistics_folder):
         os.mkdir(statistics_folder)
     if not os.path.isdir(frequency_folder):
         os.mkdir(frequency_folder)
@@ -412,8 +412,9 @@ if __name__ == "__main__":
         diaries = parse_diaries(folders={'men': men_diaries_folder, 'women': women_diaries_folder}, labels=labels[key])            
 
         # Statistics
-        diaries_statistics(diaries=diaries['men'], filename=statistics_folder + 'men_')
-        diaries_statistics(diaries=diaries['women'], filename=statistics_folder + 'women_')
+        if key == 'a_and_a_minus':
+            diaries_statistics(diaries=diaries['men'], filename=statistics_folder + 'men_')
+            diaries_statistics(diaries=diaries['women'], filename=statistics_folder + 'women_')
         # Occurrences
         adjacency_matrix(diaries=diaries['men'], filename=frequency_folder + 'men_' + key + '_frequency.csv', data_type='frequency')
         adjacency_matrix(diaries=diaries['women'], filename=frequency_folder + 'women_' + key + '_frequency.csv', data_type='frequency')
