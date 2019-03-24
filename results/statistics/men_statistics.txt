@@ -36,7 +36,7 @@ Total of intersections:6
 
 Diary: 10
 Total of barriers: 37
-Total of intersections:7
+Total of intersections:9
 
 Diary: 11
 Total of barriers: 11
